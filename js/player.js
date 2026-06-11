@@ -32,7 +32,9 @@ export class Player {
 
   async _requestWakeLock() {
     try {
-      this._wakeLock = await navigator.wakeLock?.request('screen');
+      const lock = await navigator.wakeLock?.request('screen');
+      if (this.phase === 'done') { try { lock?.release(); } catch { /* ok */ } return; }
+      this._wakeLock = lock;
     } catch { /* unsupported or denied — not fatal */ }
   }
 
@@ -86,6 +88,7 @@ export class Player {
       // move finished
       const item = this.plan.items[this.idx];
       this.completed.push(item.ex.id);
+      if (this.idx === this.plan.items.length - 1) this._closeDone = true;
       if (this.idx % 3 === 2) {
         coach.speak(personalize(pick(this.style.finishMove), this.name), { interrupt: true });
       }
@@ -128,7 +131,7 @@ export class Player {
   }
 
   skip() {
-    if (this.phase === 'done') return;
+    if (this.phase === 'done' || this.phase === 'paused') return;
     const item = this.plan.items[this.idx];
     if (item) this.skipped.push(item.ex.id);
     coach.speak(personalize(pick(this.style.skipAck), this.name), { interrupt: true });
@@ -139,14 +142,24 @@ export class Player {
     this._finish(true);
   }
 
+  // Abandon without reporting (navigation away mid-session).
+  dispose() {
+    clearInterval(this._timer);
+    this.phase = 'done';
+    document.removeEventListener('visibilitychange', this._onVis);
+    try { this._wakeLock?.release(); } catch { /* ok */ }
+  }
+
   _finish(early = false) {
+    if (this._finished) return;
+    this._finished = true;
     clearInterval(this._timer);
     this.phase = 'done';
     document.removeEventListener('visibilitychange', this._onVis);
     try { this._wakeLock?.release(); } catch { /* ok */ }
     music.stop();
-    const lastItem = this.plan.items[this.plan.items.length - 1];
-    const breathClose = !early && lastItem && this.completed.includes(lastItem.ex.id);
+    // index-based: true only if the actual final (close) move was completed
+    const breathClose = !early && !!this._closeDone;
     if (!early) {
       sound.fanfare();
       coach.speak(personalize(pick(this.style.sessionDone), this.name), { interrupt: true });

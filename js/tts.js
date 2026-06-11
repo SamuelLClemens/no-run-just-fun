@@ -11,8 +11,13 @@ function refreshVoices() {
   if (!synth) return;
   const all = synth.getVoices() || [];
   // Prefer English voices; fall back to whatever exists.
-  voices = all.filter((v) => /^en/i.test(v.lang));
-  if (!voices.length) voices = all;
+  let en = all.filter((v) => /^en/i.test(v.lang));
+  if (!en.length) en = all;
+  // Privacy: prefer on-device voices — network voices send spoken text
+  // (including the user's name) to the browser vendor. Only fall back to
+  // network voices when the device offers no local ones.
+  const local = en.filter((v) => v.localService);
+  voices = local.length ? local : en;
 }
 
 if (synth) {

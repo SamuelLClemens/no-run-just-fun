@@ -3,56 +3,62 @@ export const PHRASES = {
   "styles": {
     "gentle": {
       "welcome": [
-        "Welcome back. There is nothing to prove today, just a little time for you.",
+        "Welcome back. There is nothing to prove today, just a little time for you, {name}.",
         "Hello there. We will move gently, and anything you give is enough.",
         "Take a breath. You showed up, and that is the hardest part.",
-        "This is your time. Move at whatever pace feels kind today.",
+        "This is your time. Move at whatever pace feels kind today, {name}.",
         "However today has gone, this space is soft. Let's begin slowly.",
-        "No pressure here. Just you, your breath, and a few easy movements."
+        "No pressure here. Just you, your breath, and a few easy movements.",
+        "Welcome in. This little stretch of time is all yours."
       ],
       "mid": [
         "You're doing beautifully. Keep breathing.",
-        "Soft shoulders. Easy jaw. You are exactly where you need to be.",
+        "Soft shoulders. Easy jaw. You are exactly where you need to be, {name}.",
         "There is no rush. Let the movement be slow and kind.",
         "Notice your breath. It is carrying you through.",
         "If something feels like too much, make it smaller. That still counts.",
         "Lovely. Stay with it, gently.",
-        "Your body is listening. Thank it with a slow breath.",
+        "Your body is listening. Thank it with a slow breath, {name}.",
         "Ease is allowed. Let this feel good.",
         "You are allowed to rest your eyes and just breathe here.",
         "Stay soft. Strength can be quiet.",
         "Gently does it. You are doing enough.",
-        "Let your breath set the pace, not the clock.",
+        "Let your breath set the pace, not the clock, {name}.",
         "Small movements are still movements. Keep going at your own speed.",
         "Beautiful. Sink into this one a little more if it feels right.",
         "You can shake anything out whenever you need to.",
         "This is care, pure and simple. Let it feel that way.",
-        "Wherever your mind wandered, just come back to your breath.",
-        "Nice and easy. Your only job is to be here."
+        "Wherever your mind wandered, just come back to your breath, {name}.",
+        "Nice and easy. Your only job is to be here.",
+        "Notice your breath. It has been carrying you all day.",
+        "Soft knees, soft jaw. Nothing to prove here.",
+        "Move like you are saying something kind to your body.",
+        "Let it feel nice. That is the whole assignment."
       ],
       "halfway": [
         "Halfway there. You are doing this, quietly and surely.",
-        "That's half already. Take a soft breath and carry on.",
+        "That's half already. Take a soft breath and carry on, {name}.",
         "Halfway now. Everything from here is just gentle momentum.",
         "Half done. Notice how your body has warmed and softened.",
-        "You've reached the middle. No hurry for the rest."
+        "You've reached the middle. No hurry for the rest.",
+        "Halfway there. Stay curious about how you feel."
       ],
       "finishMove": [
         "Lovely. Let that one go.",
         "Done. Take a breath before the next.",
-        "That's complete. Well done, quietly.",
+        "That's complete. Well done, quietly, {name}.",
         "Beautiful work. Release and soften.",
         "And rest. That one is finished.",
-        "Good. Let your shoulders drop for a moment.",
+        "Good. Let your shoulders drop for a moment, {name}.",
         "That's it for this one. Gently shake it out.",
         "Finished. You moved with such care."
       ],
       "sessionDone": [
-        "That's the whole session. You gave yourself something real today.",
+        "That's the whole session. You gave yourself something real today, {name}.",
         "All done. Carry this softness with you.",
         "You finished. However it felt, it counted.",
         "Session complete. Be a little proud, quietly.",
-        "That's everything. Thank you for showing up for yourself.",
+        "That's everything. Thank you for showing up for yourself, {name}.",
         "Done for today. Rest is part of the practice too."
       ],
       "skipAck": [
@@ -65,36 +71,36 @@ export const PHRASES = {
     },
     "cheerleader": {
       "welcome": [
-        "Hello, you wonderful human! You showed up, and that is already a win!",
+        "Hello, you wonderful human! You showed up, and that is already a win, {name}!",
         "Let's go! Your body is going to thank you for this!",
         "Welcome back! Best decision of the day, right here!",
-        "You made it to the mat! That's the hardest rep, done!",
+        "You made it to the mat! That's the hardest rep, done, {name}!",
         "Here we go! A little movement, a lot of magic!",
         "Yes! You carved out time for you. Let's make it count!"
       ],
       "mid": [
         "You've got this! Keep it moving!",
-        "Look at you go! Strong and steady!",
+        "Look at you go! Strong and steady, {name}!",
         "Yes! That's the energy!",
         "Breathe big! You are crushing this!",
         "Every rep is a deposit in the strength bank!",
         "You are stronger than you were yesterday! Keep going!",
-        "Beautiful form! Own it!",
+        "Beautiful form! Own it, {name}!",
         "That's it! Power through, superstar!",
         "Keep breathing! You make this look good!",
         "Strong, steady, unstoppable! That's you!",
         "One breath at a time! You're doing it!",
-        "Your future self is cheering right now!",
+        "Your future self is cheering right now, {name}!",
         "This is what showing up looks like! Amazing!",
         "Keep that core gently hugged! You've got it!",
         "So good! Ride that momentum!",
         "You came to move, and wow, you are moving!",
-        "Stay with it! Greatness is just consistency in a ponytail!",
+        "Stay with it! Greatness is just consistency in a ponytail, {name}!",
         "Big energy! Tiny living room! You're doing it anyway!"
       ],
       "halfway": [
         "Halfway there! The second half is where heroes are made!",
-        "Boom! Fifty percent done! Keep that fire going!",
+        "Boom! Fifty percent done! Keep that fire going, {name}!",
         "Halfway! You are absolutely doing this!",
         "Half the session is in the bag! Downhill from here!",
         "Middle of the session and still shining! Let's finish strong!"
@@ -102,19 +108,19 @@ export const PHRASES = {
       "finishMove": [
         "Nailed it!",
         "And done! High five!",
-        "That move never stood a chance!",
+        "That move never stood a chance, {name}!",
         "Crushed it! On to the next!",
         "Yes! Another one in the books!",
-        "Done and dusted! You superstar!",
+        "Done and dusted! You superstar, {name}!",
         "That's a wrap on that one! Beautiful!",
         "Finished! Your body says thank you!"
       ],
       "sessionDone": [
-        "Session complete! Stand tall, that feeling is all yours!",
+        "Session complete! Stand tall, that feeling is all yours, {name}!",
         "You did the whole thing! Confetti everywhere, imagine it!",
         "Done! That's how champions recover, rebuild, and rise!",
         "Full session, finished! Go drink some water, you legend!",
-        "That's a wrap! You showed up and showed out!",
+        "That's a wrap! You showed up and showed out, {name}!",
         "All done! Today you chose yourself, and it shows!"
       ],
       "skipAck": [
@@ -127,36 +133,36 @@ export const PHRASES = {
     },
     "funny": {
       "welcome": [
-        "Welcome in. The toddler radar knows you're busy, so let's move fast and quiet.",
+        "Welcome in. The toddler radar knows you're busy, so let's move fast and quiet, {name}.",
         "You made it. Somewhere, a cup of coffee is going cold in your honor.",
         "Welcome to the only part of your day nobody will interrupt. Hopefully.",
-        "Ah, you escaped. Quick, stretch before someone needs a snack.",
+        "Ah, you escaped. Quick, stretch before someone needs a snack, {name}.",
         "Hello there. This counts as alone time, even with an audience at the doorway.",
         "Pajamas count as workout clothes if you work out in them. You're here, and that's what matters."
       ],
       "mid": [
         "Breathe in calm, breathe out the snack negotiations.",
-        "You're doing great. Better than the laundry, which is doing nothing.",
+        "You're doing great. Better than the laundry, which is doing nothing, {name}.",
         "This stretch is longer than your last uninterrupted shower. Savor it.",
         "Keep going. The couch will still love you after this.",
         "You've held this longer than your coffee stayed hot. Impressive.",
         "Somewhere a toddler senses peace and is plotting. Enjoy this while it lasts.",
-        "This is cheaper than therapy and quieter than cartoons.",
+        "This is cheaper than therapy and quieter than cartoons, {name}.",
         "Look at you, exercising on purpose. Wild behavior.",
         "Steady there. You carry car seats; this is nothing.",
         "If you can assemble a stroller, you can hold this pose.",
         "Breathe like nobody just yelled mom from another room.",
-        "You're glowing. Or sweating. Both count.",
+        "You're glowing. Or sweating. Both count, {name}.",
         "Hold it like it's the last clean onesie.",
         "Your patience survived a toddler tantrum. This pose is easy money.",
         "Pretend this is a fancy retreat. The pile of laundry is decorative.",
         "You've handled bedtime negotiations. Thirty more seconds is nothing.",
-        "This burns less than stepping on a toy block barefoot.",
+        "This burns less than stepping on a toy block barefoot, {name}.",
         "Strong work. Even the houseplants look impressed."
       ],
       "halfway": [
         "Halfway already. That's further than most family movie nights get.",
-        "Half done. The lukewarm coffee will still be there, waiting loyally.",
+        "Half done. The lukewarm coffee will still be there, waiting loyally, {name}.",
         "Halfway there, and not one person has asked you for a snack. Magic.",
         "Fifty percent done. Like the laundry, but you'll actually finish this.",
         "Halfway. You're basically a fitness influencer now, minus the ring light."
@@ -164,19 +170,19 @@ export const PHRASES = {
       "finishMove": [
         "Done, and nobody interrupted. A miracle.",
         "Nailed it. Add it to your invisible trophy shelf.",
-        "That's done. Quicker than a school drop-off line.",
+        "That's done. Quicker than a school drop-off line, {name}.",
         "Finished. You may now think about coffee for five seconds.",
         "Done. That pose had main-character energy.",
-        "Complete. Easier than folding a fitted sheet.",
+        "Complete. Easier than folding a fitted sheet, {name}.",
         "And done. Tell no one how good that felt.",
         "Finished it. Take that, Tuesday."
       ],
       "sessionDone": [
-        "Session done. Go microwave that coffee for the third time. It misses you.",
+        "Session done. Go microwave that coffee for the third time. It misses you, {name}.",
         "All done. You exercised, and the house is still standing. Double win.",
         "That's a wrap. Somewhere a minivan honks in your honor.",
         "Finished. You're officially that person who works out now.",
-        "Done. The only thing you have to carry now is this glow.",
+        "Done. The only thing you have to carry now is this glow, {name}.",
         "Whole session, complete. Put it on the fridge next to the crayon art."
       ],
       "skipAck": [
