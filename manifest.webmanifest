@@ -1,0 +1,16 @@
+{
+  "name": "You Got This!",
+  "short_name": "You Got This",
+  "description": "A free, private, playful stretch-and-strength app. No equipment, no accounts, no tracking.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FDF9F0",
+  "theme_color": "#5BA869",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
