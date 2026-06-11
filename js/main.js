@@ -1,4 +1,4 @@
-// No Run Just Fun — app shell and screens.
+// You Got This! — app shell and screens.
 // Private by design: every byte of your data lives in localStorage on this
 // device. No accounts, no analytics, no tracking, no server. Ever.
 
@@ -6,7 +6,7 @@ import { store, save, resetAll, todayKey } from './state.js';
 import { CHARACTERS, getCharacter } from './characters.js';
 import { coach, personalize, pick } from './tts.js';
 import { sound, music } from './audio.js';
-import { buildSession } from './sessionEngine.js';
+import { buildSession, TRANSITION_SECS } from './sessionEngine.js';
 import { streakInfo, levelInfo, gardenStage, checkBadges, recordSession, LEVELS } from './gamify.js';
 import { Player } from './player.js';
 import { celebrate } from './confetti.js';
@@ -49,7 +49,7 @@ function homeScreen() {
 
   app.innerHTML = `
     <header class="topbar">
-      <div class="brand"><img src="icons/icon-192.png" alt="" width="34" height="34"> <span>No Run Just Fun</span></div>
+      <div class="brand"><img src="icons/icon-192.png" alt="" width="34" height="34"> <span>You Got This!</span></div>
       <nav class="topnav">
         <a href="#badges">Badges</a>
         <a href="#settings" aria-label="Settings">Settings</a>
@@ -127,6 +127,10 @@ function showSafetyOverlay() {
   document.body.appendChild(ov);
   const btn = ov.querySelector('#safety-ok');
   btn.focus();
+  // modal focus trap: the confirm button is the only focusable element
+  ov.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') { e.preventDefault(); btn.focus(); }
+  });
   btn.addEventListener('click', () => {
     store.profile.seenSafety = true;
     save();
@@ -166,7 +170,7 @@ function sessionScreen(mins) {
             <span class="ring-num" id="ring-num" role="timer" aria-label="Seconds remaining"></span>
           </div>
         </div>
-        <div class="progress-dots" id="dots" aria-label="Session progress"></div>
+        <div class="progress-dots" id="dots" role="img" aria-label="Session progress"></div>
         <div class="controls">
           <button class="btn" id="btn-pause">Pause</button>
           <button class="btn btn-skip" id="btn-skip">Skip this move</button>
@@ -211,6 +215,7 @@ function sessionScreen(mins) {
         document.getElementById('move-name').textContent = item.ex.name;
         document.getElementById('block-chip').textContent =
           { warmup: 'warm-up', main: 'main', winddown: 'wind-down', close: 'breathe' }[item.block] || '';
+        dots.setAttribute('aria-label', `Move ${idx + 1} of ${plan.items.length}: ${item.ex.name}`);
         dots.querySelectorAll('.dot').forEach((d, i) => {
           d.classList.toggle('done', i < idx);
           d.classList.toggle('now', i === idx);
@@ -220,7 +225,7 @@ function sessionScreen(mins) {
       mirror(m) { if (avatar) avatar.setMirrored(m); },
       render(pl) {
         const item = pl.plan.items[pl.idx];
-        const total = pl.phase === 'ready' ? 6 : (item ? item.secs : 1);
+        const total = pl.phase === 'ready' ? TRANSITION_SECS : (item ? item.secs : 1);
         const frac = Math.max(pl.remaining / total, 0);
         ringFg.style.strokeDashoffset = String(CIRC * (1 - frac));
         document.getElementById('ring-num').textContent = pl.phase === 'paused' ? '⏸' : String(Math.max(pl.remaining, 0));
@@ -245,10 +250,7 @@ function sessionScreen(mins) {
 }
 
 function teardownSession() {
-  if (player && player.phase !== 'done') {
-    try { player.endEarly = () => {}; } catch { /* noop */ }
-  }
-  if (player) { try { clearInterval(player._timer); } catch { /* ok */ } }
+  if (player) { try { player.dispose(); } catch { /* ok */ } }
   player = null;
   coach.cancel();
   coach.onCaption = null;
@@ -273,6 +275,8 @@ function finishSession(stats) {
 
   if (avatar) { avatar.dispose(); avatar = null; }
   player = null;
+  // leave the #session hash so a reload cannot silently auto-start a new session
+  history.replaceState(null, '', location.pathname + location.search + '#done');
 
   if (!stats.minsMoved || !stats.completedIds.length) {
     go('#');
@@ -371,9 +375,9 @@ function settingsScreen() {
 
       <section class="card">
         <strong>Encouragement style</strong>
-        <div class="style-row" role="radiogroup" aria-label="Encouragement style">
+        <div class="style-row" role="group" aria-label="Encouragement style">
           ${['gentle', 'cheerleader', 'funny'].map((s) => `
-            <button class="style-card ${p.style === s ? 'selected' : ''}" data-style="${s}" role="radio" aria-checked="${p.style === s}">
+            <button class="style-card ${p.style === s ? 'selected' : ''}" data-style="${s}" aria-pressed="${p.style === s}">
               <strong>${s[0].toUpperCase() + s.slice(1)}</strong>
               <small>${esc(pick(PHRASES.styles[s].mid))}</small>
             </button>`).join('')}
@@ -458,6 +462,7 @@ function settingsScreen() {
 // ---------------------------------------------------------------- router
 
 let Avatar = null; // resolved lazily so the home screen renders instantly
+let renderSeq = 0; // guards against concurrent renders across the async import
 
 async function ensureAvatarClass() {
   if (!Avatar) {
@@ -467,6 +472,7 @@ async function ensureAvatarClass() {
 }
 
 async function render() {
+  const seq = ++renderSeq;
   teardownSession();
   window.scrollTo(0, 0);
   const h = location.hash || '#';
@@ -474,6 +480,7 @@ async function render() {
     const mins = parseInt(h.slice(9), 10);
     if ([7, 15, 30, 45].includes(mins)) {
       await ensureAvatarClass();
+      if (seq !== renderSeq) return; // superseded while three.js loaded
       sessionScreen(mins);
       return;
     }

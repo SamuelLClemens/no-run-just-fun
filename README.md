@@ -1,13 +1,14 @@
-# No Run Just Fun 🌻
+# You Got This! 🌸
 
 A free, private, playful stretch-and-strength app for busy women — especially
 after pregnancy. No equipment, no accounts, no tracking. A friendly 3D coach
 talks you through short yoga-leaning sessions, and a little garden grows every
-time you show up.
+time you show up. The logo is a veronica — a small flower that thrives just
+about anywhere, which felt right.
 
 ## Your live app
 
-**https://samuellclemens.github.io/no-run-just-fun/**
+**https://samuellclemens.github.io/NoRunJustFun/**
 
 Open that link on any phone or computer. That is the whole app — there is
 nothing to install or sign up for.
@@ -17,8 +18,8 @@ nothing to install or sign up for.
 1. Open the link above in **Safari** on your iPhone.
 2. Tap the **Share** button (the square with the arrow).
 3. Scroll down and tap **"Add to Home Screen"**.
-4. Tap **Add**. You now have a "Just Fun" app icon — it even works offline
-   after the first visit.
+4. Tap **Add**. You now have a "You Got This" app icon — it even works
+   offline after the first visit.
 
 ### Share it with friends
 
@@ -69,5 +70,10 @@ automatically. One technical note for maintainers: bump `CACHE_VERSION` in
 - Fonts: Fredoka and Nunito (SIL Open Font License), self-hosted.
 - 29 movements, 4 coaches, 3 encouragement styles, 10 levels, 14 badges,
   9 garden stages.
+
+The coaching voice aims for the warm, unhurried, "showing up is the win"
+spirit of the home-yoga movement. All words, characters, and art here are
+original to this app; it is not affiliated with or endorsed by any
+instructor or channel.
 
 Made with 💚 and Claude Code.

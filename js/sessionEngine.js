@@ -13,15 +13,15 @@ function shuffle(arr) {
   return a;
 }
 
-function fillFromPool(pool, budget, used, allowRepeats = false) {
+function fillFromPool(pool, budget, used, allowRepeats = false, exclude = new Set()) {
   const out = [];
   let remaining = budget;
-  let candidates = shuffle(pool.filter((e) => !used.has(e.id)));
+  let candidates = shuffle(pool.filter((e) => !used.has(e.id) && !exclude.has(e.id)));
   while (remaining > 20) {
     if (!candidates.length) {
       if (!allowRepeats) break;
       const lastId = out.length ? out[out.length - 1].id : '';
-      candidates = shuffle(pool.filter((e) => e.id !== lastId));
+      candidates = shuffle(pool.filter((e) => e.id !== lastId && !exclude.has(e.id)));
       if (!candidates.length) break;
     }
     const ex = candidates.shift();
@@ -57,6 +57,7 @@ export function buildSession(durationMins, exercises, { lastCloseId = '' } = {})
   if (!closeChoices.length) closeChoices = closePool;
   const close = shuffle(closeChoices)[0];
   used.add(close.id);
+  const reserved = new Set([close.id]); // the close may never appear mid-session
 
   const warmBudget = total * 0.2;
   const windBudget = Math.max(total * 0.2 - (close.secs + TRANSITION_SECS), 0);
@@ -68,21 +69,21 @@ export function buildSession(durationMins, exercises, { lastCloseId = '' } = {})
   // 2) warm-up
   const warm = fillFromPool(
     exercises.filter((e) => e.blocks.includes('warmup')),
-    warmBudget, used, allowRepeats,
+    warmBudget, used, allowRepeats, reserved,
   );
 
   // 3) main block, alternating
   const mainPool = exercises.filter((e) => e.blocks.includes('main'));
   const strengthPool = mainPool.filter((e) => e.tags.includes('strength'));
   const softPool = mainPool.filter((e) => !e.tags.includes('strength'));
-  const pickedStrength = fillFromPool(strengthPool, mainBudget * 0.55, used, allowRepeats);
-  const pickedSoft = fillFromPool(softPool, mainBudget * 0.45, used, allowRepeats);
+  const pickedStrength = fillFromPool(strengthPool, mainBudget * 0.55, used, allowRepeats, reserved);
+  const pickedSoft = fillFromPool(softPool, mainBudget * 0.45, used, allowRepeats, reserved);
   const main = alternate(pickedStrength, pickedSoft);
 
   // 4) wind-down
   const wind = fillFromPool(
     exercises.filter((e) => e.blocks.includes('winddown')),
-    windBudget, used, allowRepeats,
+    windBudget, used, allowRepeats, reserved,
   );
 
   const items = [...warm, ...main, ...wind, close].map((ex) => ({

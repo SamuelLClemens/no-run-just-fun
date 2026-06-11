@@ -145,7 +145,7 @@ export function checkBadges(store, gardenThresholds) {
 }
 
 // Record a finished session into the store (caller saves + celebrates).
-export function recordSession(store, { durationKey, minsMoved, completedIds, skippedIds, breathClose, startHour, closeId }) {
+export function recordSession(store, { durationKey, minsMoved, completedIds, skippedIds, breathClose, startHour, closeId, early }) {
   const p = store.progress;
   p.sessions.push({
     date: todayKey(),
@@ -158,7 +158,8 @@ export function recordSession(store, { durationKey, minsMoved, completedIds, ski
   });
   p.totalMins += minsMoved;
   if (breathClose) p.breathCloses += 1;
-  if (!p.durationsTried.includes(durationKey)) p.durationsTried.push(durationKey);
+  // duration badges require actually finishing the session, not just starting it
+  if (!early && !p.durationsTried.includes(durationKey)) p.durationsTried.push(durationKey);
   for (const id of completedIds) p.moveCounts[id] = (p.moveCounts[id] || 0) + 1;
   if (closeId) p.lastCloseId = closeId;
 }

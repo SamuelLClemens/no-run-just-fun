@@ -191,6 +191,17 @@ function buildHair(head, style, hairMat) {
     tail.position.set(0, 0.10, -0.14);
     tail.rotation.x = 0.85;
     head.add(tail);
+  } else if (style === 'loose') {
+    // shoulder-length loose hair: side curtains + soft back volume
+    for (const sx of [-1, 1]) {
+      const curtain = new THREE.Mesh(new THREE.CapsuleGeometry(0.042, 0.13, 2, 6), hairMat);
+      curtain.position.set(sx * 0.10, 0.015, -0.025);
+      curtain.rotation.z = sx * -0.12;
+      head.add(curtain);
+    }
+    const back = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.10, 2, 6), hairMat);
+    back.position.set(0, 0.03, -0.085);
+    head.add(back);
   }
 }
 
