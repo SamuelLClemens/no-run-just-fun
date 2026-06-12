@@ -182,35 +182,44 @@ function buildHair(head, style, hairMat) {
   cap.position.set(0, 0.115, -0.018);
   cap.rotation.x = -0.35;
   head.add(cap);
+  // long/soft pieces live in a sway group so they can move a beat behind
+  // the head — short tight styles (curls, bun) stay rigid
+  const sway = new THREE.Group();
+  head.add(sway);
+  let hasSway = false;
   if (style === 'curls') {
-    sphere(head, 0.062, hairMat, -0.075, 0.19, -0.02, 6, 5);
-    sphere(head, 0.066, hairMat, 0.07, 0.185, -0.03, 6, 5);
-    sphere(head, 0.06, hairMat, 0, 0.215, -0.055, 6, 5);
-    sphere(head, 0.055, hairMat, -0.09, 0.10, -0.07, 6, 5);
-    sphere(head, 0.055, hairMat, 0.09, 0.10, -0.07, 6, 5);
+    sphere(head, 0.062, hairMat, -0.075, 0.19, -0.02, 8, 6);
+    sphere(head, 0.066, hairMat, 0.07, 0.185, -0.03, 8, 6);
+    sphere(head, 0.06, hairMat, 0, 0.215, -0.055, 8, 6);
+    sphere(head, 0.055, hairMat, -0.09, 0.10, -0.07, 8, 6);
+    sphere(head, 0.055, hairMat, 0.09, 0.10, -0.07, 8, 6);
   } else if (style === 'bob') {
-    sphere(head, 0.075, hairMat, -0.095, 0.06, -0.03, 6, 5);
-    sphere(head, 0.075, hairMat, 0.095, 0.06, -0.03, 6, 5);
-    sphere(head, 0.09, hairMat, 0, 0.08, -0.085, 6, 5);
+    sphere(sway, 0.075, hairMat, -0.095, 0.06, -0.03, 8, 6);
+    sphere(sway, 0.075, hairMat, 0.095, 0.06, -0.03, 8, 6);
+    sphere(sway, 0.09, hairMat, 0, 0.08, -0.085, 8, 6);
+    hasSway = true;
   } else if (style === 'bun') {
-    sphere(head, 0.052, hairMat, 0, 0.235, -0.05, 6, 5);
+    sphere(head, 0.052, hairMat, 0, 0.235, -0.05, 8, 6);
   } else if (style === 'ponytail') {
-    const tail = new THREE.Mesh(new THREE.CapsuleGeometry(0.038, 0.15, 2, 6), hairMat);
+    const tail = new THREE.Mesh(new THREE.CapsuleGeometry(0.038, 0.15, 3, 10), hairMat);
     tail.position.set(0, 0.10, -0.14);
     tail.rotation.x = 0.85;
-    head.add(tail);
+    sway.add(tail);
+    hasSway = true;
   } else if (style === 'loose') {
     // shoulder-length loose hair: side curtains + soft back volume
     for (const sx of [-1, 1]) {
-      const curtain = new THREE.Mesh(new THREE.CapsuleGeometry(0.042, 0.13, 2, 6), hairMat);
+      const curtain = new THREE.Mesh(new THREE.CapsuleGeometry(0.042, 0.13, 3, 10), hairMat);
       curtain.position.set(sx * 0.10, 0.015, -0.025);
       curtain.rotation.z = sx * -0.12;
-      head.add(curtain);
+      sway.add(curtain);
     }
-    const back = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.10, 2, 6), hairMat);
+    const back = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.10, 3, 10), hairMat);
     back.position.set(0, 0.03, -0.085);
-    head.add(back);
+    sway.add(back);
+    hasSway = true;
   }
+  return hasSway ? sway : null;
 }
 
 function buildRig(character) {
@@ -249,7 +258,7 @@ function buildRig(character) {
   smile.position.set(0, 0.066, 0.103);
   smile.rotation.z = Math.PI + (Math.PI * 0.125);
   joints.head.add(smile);
-  buildHair(joints.head, character.hairStyle, hairMat);
+  const hairSway = buildHair(joints.head, character.hairStyle, hairMat);
 
   // arms (sleeve on upper arm, skin below)
   for (const side of ['L', 'R']) {
@@ -260,10 +269,22 @@ function buildRig(character) {
     const el = joint(sh, 0, -0.26, 0);
     joints['elbow' + side] = el;
     capsule(el, 0.045, 0.16, skin, -0.105);
-    // hand: flattened, slightly elongated — reads as a palm, not a mitten ball
-    const hand = sphere(el, 0.055, skin, 0, -0.25, 0.008, 10, 8);
-    hand.scale.set(0.85, 1.15, 0.62);
+    // hand: flattened palm with four relaxed fingers and a thumb
+    const hand = sphere(el, 0.05, skin, 0, -0.243, 0.008, 10, 8);
+    hand.scale.set(0.82, 1.05, 0.6);
     hand.rotation.x = 0.18;
+    for (let f = 0; f < 4; f++) {
+      const finger = new THREE.Mesh(new THREE.CapsuleGeometry(0.0105, 0.034, 2, 6), skin);
+      finger.position.set(-0.027 + f * 0.018, -0.291, 0.014);
+      finger.rotation.x = 0.3;                    // gentle relaxed curl
+      finger.rotation.z = (f - 1.5) * 0.07;       // slight natural fan
+      el.add(finger);
+    }
+    const thumb = new THREE.Mesh(new THREE.CapsuleGeometry(0.011, 0.026, 2, 6), skin);
+    thumb.position.set(sx * 0.034, -0.252, 0.022);
+    thumb.rotation.z = sx * 0.85;
+    thumb.rotation.x = 0.35;
+    el.add(thumb);
   }
 
   // legs (leggings, bare feet)
@@ -280,7 +301,7 @@ function buildRig(character) {
     box(an, 0.085, 0.055, 0.19, skin, 0, -0.035, 0.045);
   }
 
-  return { root, joints, eyes };
+  return { root, joints, eyes, hairSway };
 }
 
 // ---------- avatar ----------
@@ -420,6 +441,11 @@ export class Avatar {
         // natural blink: a quick 0.12s close on an uneven ~4.1s cycle
         const blink = (this.time % 4.1) < 0.12 ? 0.12 : 1;
         for (const eye of this.rig.eyes) eye.scale.y = blink;
+      }
+      if (this._breathe && this.rig.hairSway) {
+        // soft secondary motion on long hair, a beat out of phase with breath
+        this.rig.hairSway.rotation.z = 0.03 * Math.sin(this.time * (Math.PI * 2) / 4.7);
+        this.rig.hairSway.rotation.x = 0.018 * Math.sin(this.time * (Math.PI * 2) / 3.1 + 0.8);
       }
     }
     this.renderer.render(this.scene, this.camera);
