@@ -99,7 +99,6 @@ button {
   gap: 10px;
 }
 .brand { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
-.brand img { border-radius: 10px; }
 .topnav { display: flex; gap: 6px; }
 .topnav a, .back { color: var(--green-700); font-weight: 800; text-decoration: none; padding: 10px 8px; display: inline-block; }
 .topnav a:hover, .back:hover { text-decoration: underline; }
@@ -289,6 +288,17 @@ input[type='range'] { accent-color: var(--green-500); }
 }
 .hello-flower { border-radius: 24px; }
 .hello h1 { font-size: 2rem; margin-top: 12px; }
+.beta-chip {
+  display: inline-block; background: var(--green-200); color: var(--ink);
+  font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 999px;
+  vertical-align: middle; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.hint { color: var(--ink-soft); font-size: 0.88rem; margin: 6px 0 10px; }
+.nv-progress { margin-top: 10px; }
+.nv-track { height: 10px; border-radius: 999px; background: var(--green-100); overflow: hidden; }
+.nv-bar { height: 100%; width: 0; border-radius: 999px; background: var(--green-600); transition: width 0.3s ease; }
+.nv-progress small { color: var(--ink-soft); display: block; margin-top: 6px; }
+
 .hello-logo { margin: 0 0 6px; }
 .hello-logo .logo-svg { height: clamp(48px, 13vw, 72px); width: auto; max-width: 100%; }
 .brand .logo-svg { height: 36px; width: auto; display: block; }

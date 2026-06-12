@@ -64,6 +64,13 @@ export const BASES = {
 
 const D2R = Math.PI / 180;
 
+// Gentle inhale/exhale layered on any pose (degrees at full inhale):
+// chest rises, shoulders lift a touch, head answers — never frozen mid-hold.
+const BREATH_OFFSETS = {
+  chest: [1.5, 0, 0], head: [-0.7, 0, 0],
+  shoulderL: [0, 0, 0.6], shoulderR: [0, 0, -0.6],
+};
+
 function smoothstep(x) { return x * x * (3 - 2 * x); }
 
 function lerp3(a, b, s) {
@@ -306,6 +313,9 @@ export class Avatar {
     this._running = false;
     this.speed = 1;
 
+    // subtle always-on breathing layer; decorative, so it honors reduced motion
+    this._breathe = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
     this.setCharacter(character);
 
     this._onVis = () => {
@@ -329,7 +339,7 @@ export class Avatar {
     }
     this.rig = buildRig(character);
     this.pivot.add(this.rig.root);
-    if (this.current) this._apply(this.current, 1); // keep pose through swap
+    if (this.current) this._apply(this.current); // keep pose through swap
     this._renderOnce();
   }
 
@@ -394,18 +404,22 @@ export class Avatar {
       const yawTarget = (this.mirrored ? -1 : 1) * this.compiled.yaw;
       this._yaw += (yawTarget - this._yaw) * k;
       this.pivot.rotation.y = this._yaw * D2R;
-      this._apply(this.current);
+      const breath = this._breathe ? Math.sin(this.time * (Math.PI * 2) / 3.6) : 0;
+      this._apply(this.current, breath);
     }
     this.renderer.render(this.scene, this.camera);
   }
 
-  _apply(st) {
+  _apply(st, breath = 0) {
     const { root, joints } = this.rig;
     root.position.set(st.rootPos[0], st.rootPos[1], st.rootPos[2]);
     root.rotation.set(st.rootRot[0] * D2R, st.rootRot[1] * D2R, st.rootRot[2] * D2R, 'XYZ');
     for (const j of JOINT_NAMES) {
       const v = st.joints[j];
-      joints[j].rotation.set(v[0] * D2R, v[1] * D2R, v[2] * D2R, 'XYZ');
+      let x = v[0], y = v[1], z = v[2];
+      const off = breath ? BREATH_OFFSETS[j] : null;
+      if (off) { x += off[0] * breath; y += off[1] * breath; z += off[2] * breath; }
+      joints[j].rotation.set(x * D2R, y * D2R, z * D2R, 'XYZ');
     }
   }
 

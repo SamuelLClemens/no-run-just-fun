@@ -5,6 +5,7 @@
 import { store, save, resetAll, todayKey } from './state.js';
 import { CHARACTERS, getCharacter } from './characters.js';
 import { coach, personalize, pick } from './tts.js';
+import { naturalVoice } from './natural-voice.js';
 import { sound, music } from './audio.js';
 import { buildSession, TRANSITION_SECS } from './sessionEngine.js';
 import { streakInfo, levelInfo, gardenStage, checkBadges, recordSession, LEVELS } from './gamify.js';
@@ -200,6 +201,8 @@ function sessionScreen(mins) {
   coach.onCaption = (t) => { captionEl.textContent = t; };
   coach.enabled = profile.voiceOn;
   coach.voiceURI = profile.voiceURI;
+  coach.naturalOn = profile.naturalOn;
+  if (profile.naturalOn && naturalVoice.state === 'off') naturalVoice.enable(); // warms up in the background; system voice covers until ready
   sound.sfxOn = profile.sfxOn;
   music.volume = profile.musicVol;
 
@@ -271,6 +274,7 @@ function teardownSession() {
   player = null;
   coach.cancel();
   coach.onCaption = null;
+  naturalVoice.onProgress = null;
   music.stop();
   if (avatar) { avatar.dispose(); avatar = null; }
 }
@@ -391,6 +395,16 @@ function settingsScreen() {
       </section>
 
       <section class="card">
+        <strong>Natural voice <span class="beta-chip">beta</span></strong>
+        <p class="hint">A warmer, more human voice that runs entirely on this device. Turning it on downloads a public voice model once (about 90 MB) — nothing about you is sent anywhere, ever. If it cannot load, the regular voice takes over automatically. Works best on computers and recent phones.</p>
+        <label class="toggle"><input type="checkbox" id="set-natural" ${p.naturalOn ? 'checked' : ''}> Use natural voice</label>
+        <div class="nv-progress" id="nv-progress" hidden>
+          <div class="nv-track"><div class="nv-bar" id="nv-bar"></div></div>
+          <small id="nv-status" role="status"></small>
+        </div>
+      </section>
+
+      <section class="card">
         <strong>Encouragement style</strong>
         <div class="style-row" role="group" aria-label="Encouragement style">
           ${['gentle', 'cheerleader', 'funny'].map((s) => `
@@ -443,11 +457,49 @@ function settingsScreen() {
     sound.unlock();
     coach.enabled = true;
     coach.voiceURI = p.voiceURI;
+    coach.naturalOn = p.naturalOn;
     coach.speak(personalize(pick(PHRASES.styles[p.style].welcome), p.name), { interrupt: true });
     coach.enabled = p.voiceOn;
   });
   document.getElementById('set-voiceon').addEventListener('change', (e) => {
     p.voiceOn = e.target.checked; coach.enabled = p.voiceOn; save();
+  });
+  const nvToggle = document.getElementById('set-natural');
+  const nvWrap = document.getElementById('nv-progress');
+  const nvBar = document.getElementById('nv-bar');
+  const nvStatus = document.getElementById('nv-status');
+  const nvShow = (state, prog) => {
+    if (state === 'loading') {
+      nvWrap.hidden = false;
+      nvBar.style.width = Math.round(prog * 100) + '%';
+      nvStatus.textContent = `Downloading the voice, one time only… ${Math.round(prog * 100)}%`;
+    } else if (state === 'ready') {
+      nvWrap.hidden = false;
+      nvBar.style.width = '100%';
+      nvStatus.textContent = 'Natural voice ready. Tap "Hear it" above to try her out.';
+    } else if (state === 'slow') {
+      nvWrap.hidden = false;
+      nvBar.style.width = '100%';
+      nvStatus.textContent = 'This device makes the voice too slowly for live coaching, so the regular voice will do the talking. A newer computer or phone may manage it.';
+      nvToggle.checked = false;
+      p.naturalOn = false; coach.naturalOn = false; save();
+    } else if (state === 'failed') {
+      // transient (network, CDN) — keep the user's choice; next launch retries
+      nvWrap.hidden = false;
+      nvStatus.textContent = 'Could not load the natural voice right now — the regular voice will carry on, and the app will try again next time.';
+    } else {
+      nvWrap.hidden = true;
+    }
+  };
+  naturalVoice.onProgress = nvShow;
+  if (p.naturalOn && naturalVoice.state === 'off') naturalVoice.enable(); // opted in earlier — warm it up here too
+  if (p.naturalOn || naturalVoice.state !== 'off') nvShow(naturalVoice.state, naturalVoice.progress);
+  nvToggle.addEventListener('change', (e) => {
+    p.naturalOn = e.target.checked;
+    coach.naturalOn = p.naturalOn;
+    save();
+    if (p.naturalOn) naturalVoice.enable({ reprobe: true }); // explicit ask re-measures the device
+    else nvWrap.hidden = true;
   });
   app.querySelectorAll('.style-card').forEach((b) => b.addEventListener('click', () => {
     p.style = b.dataset.style;

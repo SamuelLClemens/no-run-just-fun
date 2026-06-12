@@ -34,6 +34,10 @@ so sharing the link never shares your data.
 - There is no server, no account, no analytics, and no tracking of any kind.
 - Nothing you do in the app is ever sent anywhere, because there is nowhere
   to send it.
+- The one optional exception to "no downloads": turning on **Natural voice**
+  in Settings fetches a public, open-source voice model file once. That is a
+  one-way download of a static file — nothing about you travels the other
+  direction. Full asset list in [LICENSES.md](LICENSES.md).
 
 ## Safety, plainly
 
@@ -65,7 +69,12 @@ automatically. One technical note for maintainers: bump `CACHE_VERSION` in
 
 - Plain HTML/CSS/JavaScript — no build step, no frameworks except
   [Three.js](https://threejs.org) (self-hosted in `lib/`) for the 3D coach.
-- The coach's voice is your device's built-in text-to-speech.
+- The coach performs every movement as a hand-keyframed animation loop with
+  a gentle always-on breathing motion, so she never looks frozen.
+- The coach's voice is your device's built-in text-to-speech. An optional
+  **Natural voice (beta)** in Settings downloads a small open-source voice
+  model once (~90 MB) and then speaks entirely on your device; if it cannot
+  load, the regular voice takes over automatically.
 - All sounds and music are generated in the browser with the Web Audio API —
   no audio files, no licensing worries.
 - Fonts: Fredoka and Nunito (SIL Open Font License), self-hosted.

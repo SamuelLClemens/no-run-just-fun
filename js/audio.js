@@ -15,6 +15,13 @@ function ensureCtx() {
   return ctx;
 }
 
+// Shared with the natural voice so the whole app uses ONE AudioContext —
+// it unlocks on the same user gesture (sound.unlock) and iOS caps how many
+// contexts a page may hold.
+export function sharedAudioContext() {
+  return ensureCtx();
+}
+
 function pluck(freq, time, dur, gain, type = 'sine') {
   const o = ctx.createOscillator();
   const g = ctx.createGain();
