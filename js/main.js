@@ -20,6 +20,23 @@ const app = document.getElementById('app');
 let avatar = null;        // lazy three.js instance, one at a time
 let player = null;
 
+// Logo lockup — the veronica flower forms the exclamation mark.
+// Keep in sync with the static copy in index.html (.hello-logo).
+function logoSVG() {
+  return `<svg class="logo-svg" viewBox="0 0 494 92" role="img" aria-label="You Got This!" xmlns="http://www.w3.org/2000/svg">
+    <title>You Got This!</title>
+    <text x="12" y="74" font-family="Fredoka, 'Avenir Next Rounded', system-ui, sans-serif" font-weight="600" font-size="74" fill="var(--ink, #1F4D2E)" textLength="421" lengthAdjust="spacingAndGlyphs">You Got This</text>
+    <path d="M 452.3 21.5 A 4.7 4.7 0 0 1 461.6 21.0 C 460.6 28.5 460.0 36 459.6 42.5 A 3.1 3.1 0 0 1 453.4 42.8 C 453.2 35.5 452.7 28.5 452.3 21.5 Z" fill="var(--green-700, #2E6B3D)"/>
+    <path d="M 452.8 30.5 C 448 26.5 441.8 27.2 438.4 31.4 C 442 35.6 448.6 35.2 452.8 30.5 Z" fill="var(--green-500, #5BA869)"/>
+    <g transform="translate(457 70) rotate(10) scale(0.88)">
+      <g fill="#5B6BD0"><ellipse cy="-10" rx="7.4" ry="10.6"/><ellipse cy="-10" rx="7.4" ry="10.6" transform="rotate(90)"/><ellipse cy="-10" rx="7.4" ry="10.6" transform="rotate(180)"/><ellipse cy="-10" rx="7.4" ry="10.6" transform="rotate(270)"/></g>
+      <g fill="#7B8FE8"><ellipse cy="-9.6" rx="5.8" ry="8.8"/><ellipse cy="-9.6" rx="5.8" ry="8.8" transform="rotate(90)"/><ellipse cy="-9.6" rx="5.8" ry="8.8" transform="rotate(180)"/><ellipse cy="-9.6" rx="5.8" ry="8.8" transform="rotate(270)"/></g>
+      <circle r="6.2" fill="#5B6BD0"/><circle r="4.6" fill="#FFFFFF"/>
+      <circle cx="-1.7" cy="0.6" r="1.7" fill="#2E3A8C"/><circle cx="1.8" cy="-0.8" r="1.7" fill="#2E3A8C"/>
+    </g>
+  </svg>`;
+}
+
 function esc(s) {
   return String(s).replace(/[&<>"']/g, (c) => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -49,7 +66,7 @@ function homeScreen() {
 
   app.innerHTML = `
     <header class="topbar">
-      <div class="brand"><img src="icons/icon-192.png" alt="" width="34" height="34"> <span>You Got This!</span></div>
+      <div class="brand">${logoSVG()}</div>
       <nav class="topnav">
         <a href="#badges">Badges</a>
         <a href="#settings" aria-label="Settings">Settings</a>

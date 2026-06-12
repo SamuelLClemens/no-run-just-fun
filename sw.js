@@ -1,7 +1,7 @@
 // Offline support: precache the whole app on install, serve cache-first.
 // Bump CACHE_VERSION with every release so updates roll out cleanly.
 
-const CACHE_VERSION = 'ygt-v1.2.0';
+const CACHE_VERSION = 'ygt-v1.3.0';
 
 const PRECACHE = [
   './',
@@ -31,6 +31,9 @@ const PRECACHE = [
   'icons/icon-512.png',
   'icons/apple-touch-icon.png',
   'icons/maskable-512.png',
+  'icons/favicon-48.png',
+  'icons/favicon-32.png',
+  'icons/favicon-16.png',
 ];
 
 self.addEventListener('install', (e) => {
