@@ -1,6 +1,11 @@
 // Coach voice via the Web Speech API. Handles Safari/iOS quirks:
 // async voice loading, long-utterance cutoffs (sentence chunking),
 // and Chrome's pause-after-15s bug (periodic resume).
+// An optional in-browser natural voice (see natural-voice.js) takes over
+// when the user has enabled it and its model is loaded; any failure there
+// falls straight back to the system voice mid-sentence.
+
+import { naturalVoice } from './natural-voice.js';
 
 const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
 
@@ -32,7 +37,9 @@ export const coach = {
   voiceURI: '',
   rate: 1.0,
   enabled: true,
+  naturalOn: false,          // user opt-in; engages only once the model is ready
   onCaption: null,           // (text) => void — captions always render, even muted
+  _sgen: 0,                  // bumped by cancel() so in-flight speech stops cleanly
 
   listVoices() {
     refreshVoices();
@@ -42,6 +49,8 @@ export const coach = {
   supported: !!synth,
 
   cancel() {
+    this._sgen += 1;
+    naturalVoice.cancel();
     if (synth) synth.cancel();
     clearInterval(resumeTimer);
   },
@@ -53,10 +62,11 @@ export const coach = {
     if (!parts.length) return Promise.resolve();
     const caption = parts.join(' ');
     if (this.onCaption) this.onCaption(caption);
-    if (!synth || !this.enabled) return Promise.resolve();
+    if (!this.enabled) return Promise.resolve();
     if (interrupt) this.cancel();
 
-    // Chunk by sentence: iOS Safari can truncate long utterances.
+    // Chunk by sentence: iOS Safari can truncate long utterances, and the
+    // natural voice keeps latency low by generating one sentence at a time.
     const chunks = [];
     for (const p of parts) {
       const sentences = p.match(/[^.!?]+[.!?]*/g) || [p];
@@ -66,6 +76,24 @@ export const coach = {
       }
     }
 
+    // Two cancellation counters on purpose: naturalVoice._gen stops queued
+    // and playing audio inside the voice module; coach._sgen stops THIS
+    // method's fallback from speaking a line the user already cancelled.
+    if (this.naturalOn && naturalVoice.available) {
+      const gen = this._sgen;
+      return naturalVoice.speak(chunks).catch(() => {
+        // generation broke — retire the natural voice for this visit and
+        // let the system voice repeat the line and handle all future ones
+        naturalVoice.retire();
+        if (gen === this._sgen) return this._webSpeak(chunks);
+      });
+    }
+
+    return this._webSpeak(chunks);
+  },
+
+  _webSpeak(chunks) {
+    if (!synth || !chunks.length) return Promise.resolve();
     const voice = voices.find((v) => v.voiceURI === this.voiceURI) || null;
     return new Promise((resolve) => {
       let i = 0;

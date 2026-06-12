@@ -13,6 +13,7 @@ function defaults() {
       voiceURI: '',
       style: 'gentle',          // gentle | cheerleader | funny
       voiceOn: true,
+      naturalOn: false,         // optional in-browser natural voice (beta)
       sfxOn: true,
       musicOn: false,           // default OFF per iOS autoplay + brief
       musicVol: 0.5,
