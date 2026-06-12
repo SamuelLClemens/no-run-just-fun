@@ -3,8 +3,9 @@
 A free, private, playful stretch-and-strength app for busy women — especially
 after pregnancy. No equipment, no accounts, no tracking. A friendly 3D coach
 talks you through short yoga-leaning sessions, and a little garden grows every
-time you show up. The logo is a veronica — a small flower that thrives just
-about anywhere, which felt right.
+time you show up. The logo joins the name and a veronica — a small flower
+that thrives just about anywhere — into one mark: the flower forms the
+exclamation point of "You Got This!".
 
 ## Your live app
 

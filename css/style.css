@@ -289,5 +289,8 @@ input[type='range'] { accent-color: var(--green-500); }
 }
 .hello-flower { border-radius: 24px; }
 .hello h1 { font-size: 2rem; margin-top: 12px; }
+.hello-logo { margin: 0 0 6px; }
+.hello-logo .logo-svg { height: clamp(48px, 13vw, 72px); width: auto; max-width: 100%; }
+.brand .logo-svg { height: 36px; width: auto; display: block; }
 .hello-sub { color: var(--ink-soft); font-size: 0.95rem; }
 .hello-soon { font-weight: 800; color: var(--green-600); }
