@@ -9,7 +9,7 @@ function defaults() {
     version: CURRENT_VERSION,
     profile: {
       name: '',
-      character: 'maya',
+      character: 'vera',
       voiceURI: '',
       style: 'gentle',          // gentle | cheerleader | funny
       voiceOn: true,

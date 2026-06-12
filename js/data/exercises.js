@@ -129,8 +129,8 @@ export const EXERCISES = [
     "secs": 50,
     "why": "Bridges wake up the muscles in your bottom and the back of your legs, which quietly support your lower back and pelvic floor. All of that, without a single crunch.",
     "cues": [
-      "Press down through your heels",
-      "Lift your hips into a smooth ramp",
+      "Exhale, press through your heels",
+      "Float your hips up into a smooth ramp",
       "Squeeze gently at the top",
       "Lower down slowly, bone by bone"
     ]
@@ -205,9 +205,9 @@ export const EXERCISES = [
     "secs": 50,
     "why": "Squats are the most useful strength there is, because you do them every day with laundry baskets and little humans. Practicing them slowly makes all that real-life lifting feel easier.",
     "cues": [
-      "Sit back toward that invisible chair",
+      "Inhale, sit back toward that invisible chair",
       "Keep your chest proud and lifted",
-      "Press through your heels to stand",
+      "Exhale, press through your heels to stand",
       "Go slow on the way down"
     ]
   },
@@ -263,7 +263,7 @@ export const EXERCISES = [
     "why": "Feeding and carrying curl us forward for hours, so this gentle lift strengthens the upper back and opens the chest. Low and easy is exactly right.",
     "cues": [
       "Press lightly through your hands",
-      "Lift your chest just a little",
+      "Inhale, lift your chest just a little",
       "Slide your shoulders away from your ears",
       "Keep it gentle, low is lovely"
     ]

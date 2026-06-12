@@ -9,7 +9,11 @@ export const PHRASES = {
         "This is your time. Move at whatever pace feels kind today, {name}.",
         "However today has gone, this space is soft. Let's begin slowly.",
         "No pressure here. Just you, your breath, and a few easy movements.",
-        "Welcome in. This little stretch of time is all yours."
+        "Welcome in. This little stretch of time is all yours.",
+        "Come as you are today. Tired eyes, pajamas, all of it is welcome here.",
+        "Find a comfortable seat and let the day land for a moment. We begin with breath, {name}.",
+        "Let's start by simply arriving. One easy breath in, one slow breath out.",
+        "Whatever brought you here, you made it. We will move with the breath, one wave at a time, {name}."
       ],
       "mid": [
         "You're doing beautifully. Keep breathing.",
@@ -33,7 +37,15 @@ export const PHRASES = {
         "Notice your breath. It has been carrying you all day.",
         "Soft knees, soft jaw. Nothing to prove here.",
         "Move like you are saying something kind to your body.",
-        "Let it feel nice. That is the whole assignment."
+        "Let it feel nice. That is the whole assignment.",
+        "Inhale, find a little length. Exhale, soften anything you do not need.",
+        "If it is available to you today, deepen it a touch. If not, ease off. Both are right.",
+        "Maybe let your eyes close here. The breath knows the way, {name}.",
+        "Press into the ground and notice it pressing back. You are supported.",
+        "There is no perfect shape here. Find the version that feels honest today.",
+        "Bend your knees as generously as you like. This is your practice, {name}.",
+        "Wherever you are in the shape, see if you can find one breath of ease.",
+        "Listen in. Your body has been telling you things all day."
       ],
       "halfway": [
         "Halfway there. You are doing this, quietly and surely.",
@@ -41,7 +53,8 @@ export const PHRASES = {
         "Halfway now. Everything from here is just gentle momentum.",
         "Half done. Notice how your body has warmed and softened.",
         "You've reached the middle. No hurry for the rest.",
-        "Halfway there. Stay curious about how you feel."
+        "Halfway there. Stay curious about how you feel.",
+        "Halfway. Check in: where can you give a little less effort and find a little more ease, {name}?"
       ],
       "finishMove": [
         "Lovely. Let that one go.",
@@ -51,7 +64,9 @@ export const PHRASES = {
         "And rest. That one is finished.",
         "Good. Let your shoulders drop for a moment, {name}.",
         "That's it for this one. Gently shake it out.",
-        "Finished. You moved with such care."
+        "Finished. You moved with such care.",
+        "Soft landing. One easy breath before we move on.",
+        "Let that one go with an exhale, {name}."
       ],
       "sessionDone": [
         "That's the whole session. You gave yourself something real today, {name}.",
@@ -59,14 +74,17 @@ export const PHRASES = {
         "You finished. However it felt, it counted.",
         "Session complete. Be a little proud, quietly.",
         "That's everything. Thank you for showing up for yourself, {name}.",
-        "Done for today. Rest is part of the practice too."
+        "Done for today. Rest is part of the practice too.",
+        "Before you go, notice how you feel compared to when you arrived. That difference is yours, {name}.",
+        "The practice is finished, but the breath comes with you. See you soon."
       ],
       "skipAck": [
         "Skipped, and that is completely fine. Listening to your body is the skill.",
         "No problem. We move on, no questions asked.",
         "Good call. Some moves are not for some days.",
         "Skipping is allowed here, always. On we go.",
-        "That's okay. Choosing what works for you is the whole point."
+        "That's okay. Choosing what works for you is the whole point.",
+        "Skipped, with full permission. Honoring what you need is the practice."
       ]
     },
     "cheerleader": {
@@ -214,7 +232,8 @@ export const PHRASES = {
       "Coming up, {move}. Find your spot.",
       "Get ready for {move}. No rush.",
       "Here comes {move}. Settle in when you're ready.",
-      "{move} is next. A breath first, then we go."
+      "{move} is next. A breath first, then we go.",
+      "Meet me in {move} whenever you are ready. No hurry at all."
     ],
     "switchSides": [
       "Switch sides whenever you're ready.",

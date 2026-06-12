@@ -59,8 +59,9 @@ export class Player {
     sound.chime();
     this.hooks.moveStart(item, this.idx);
     this.hooks.mirror(false);
+    // first move queues behind the welcome instead of cutting it off
     const ready = personalize(pick(this.phrases.micro.getReady), this.name, item.ex.name);
-    coach.speak(ready, { interrupt: true });
+    coach.speak(ready, { interrupt: this.idx > 0 });
     this.hooks.render(this);
   }
 

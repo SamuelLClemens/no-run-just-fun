@@ -214,7 +214,7 @@ function sessionScreen(mins) {
       moveStart(item, idx) {
         document.getElementById('move-name').textContent = item.ex.name;
         document.getElementById('block-chip').textContent =
-          { warmup: 'warm-up', main: 'main', winddown: 'wind-down', close: 'breathe' }[item.block] || '';
+          { arrive: 'arrive', warmup: 'warm-up', main: 'main', winddown: 'wind-down', close: 'breathe' }[item.block] || '';
         dots.setAttribute('aria-label', `Move ${idx + 1} of ${plan.items.length}: ${item.ex.name}`);
         dots.querySelectorAll('.dot').forEach((d, i) => {
           d.classList.toggle('done', i < idx);

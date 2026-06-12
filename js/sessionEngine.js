@@ -1,8 +1,12 @@
-// Assembles a session from the tagged library:
-// ~20% gentle warm-up, ~60% main block alternating strength/mobility/stretch,
-// ~20% wind-down ending in a breathing + kind-thoughts close. Every time.
+// Assembles a session from the tagged library, shaped like a home yoga
+// practice: a seated breath arrival, ~20% gentle warm-up, ~60% main block
+// alternating strength/mobility/stretch, ~20% wind-down, and a breathing +
+// kind-thoughts close. Arrive, move, settle, close. Every time.
 
 const TRANSITION_SECS = 6; // "get ready" gap between moves
+
+// Seated breath moves that can open a practice (the close stays unique).
+const ARRIVAL_IDS = ['box-breath', 'pelvic-breath'];
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -51,7 +55,8 @@ export function buildSession(durationMins, exercises, { lastCloseId = '' } = {})
   const total = durationMins * 60;
   const used = new Set();
 
-  // 1) the close — always last, always breath
+  // 1) the close — always last, always breath (picked first so the
+  //    arrival never duplicates it)
   const closePool = exercises.filter((e) => e.blocks.includes('close'));
   let closeChoices = closePool.filter((e) => e.id !== lastCloseId);
   if (!closeChoices.length) closeChoices = closePool;
@@ -59,20 +64,27 @@ export function buildSession(durationMins, exercises, { lastCloseId = '' } = {})
   used.add(close.id);
   const reserved = new Set([close.id]); // the close may never appear mid-session
 
-  const warmBudget = total * 0.2;
+  // 2) the arrival — every practice begins seated, with breath
+  const arrival = shuffle(
+    exercises.filter((e) => ARRIVAL_IDS.includes(e.id) && e.id !== close.id),
+  )[0];
+  used.add(arrival.id);
+  reserved.add(arrival.id);
+
+  const warmBudget = Math.max(total * 0.2 - (arrival.secs + TRANSITION_SECS), 0);
   const windBudget = Math.max(total * 0.2 - (close.secs + TRANSITION_SECS), 0);
   const mainBudget = total * 0.6;
 
   // long sessions may revisit moves once a pool runs dry
   const allowRepeats = durationMins >= 30;
 
-  // 2) warm-up
+  // 3) warm-up
   const warm = fillFromPool(
     exercises.filter((e) => e.blocks.includes('warmup')),
     warmBudget, used, allowRepeats, reserved,
   );
 
-  // 3) main block, alternating
+  // 4) main block, alternating
   const mainPool = exercises.filter((e) => e.blocks.includes('main'));
   const strengthPool = mainPool.filter((e) => e.tags.includes('strength'));
   const softPool = mainPool.filter((e) => !e.tags.includes('strength'));
@@ -80,17 +92,20 @@ export function buildSession(durationMins, exercises, { lastCloseId = '' } = {})
   const pickedSoft = fillFromPool(softPool, mainBudget * 0.45, used, allowRepeats, reserved);
   const main = alternate(pickedStrength, pickedSoft);
 
-  // 4) wind-down
+  // 5) wind-down
   const wind = fillFromPool(
     exercises.filter((e) => e.blocks.includes('winddown')),
     windBudget, used, allowRepeats, reserved,
   );
 
-  const items = [...warm, ...main, ...wind, close].map((ex) => ({
-    ex,
-    secs: ex.secs,
-    block: warm.includes(ex) ? 'warmup' : ex === close ? 'close' : wind.includes(ex) ? 'winddown' : 'main',
-  }));
+  const asItem = (block) => (ex) => ({ ex, secs: ex.secs, block });
+  const items = [
+    asItem('arrive')(arrival),
+    ...warm.map(asItem('warmup')),
+    ...main.map(asItem('main')),
+    ...wind.map(asItem('winddown')),
+    asItem('close')(close),
+  ];
 
   const totalSecs = items.reduce((s, i) => s + i.secs + TRANSITION_SECS, 0);
   return { items, totalSecs, durationKey: durationMins, closeId: close.id };

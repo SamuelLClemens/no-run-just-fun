@@ -1,7 +1,7 @@
 // Offline support: precache the whole app on install, serve cache-first.
 // Bump CACHE_VERSION with every release so updates roll out cleanly.
 
-const CACHE_VERSION = 'ygt-v1.1.0';
+const CACHE_VERSION = 'ygt-v1.2.0';
 
 const PRECACHE = [
   './',
