@@ -71,9 +71,13 @@ automatically. One technical note for maintainers: bump `CACHE_VERSION` in
 - 29 movements, 4 coaches, 3 encouragement styles, 10 levels, 14 badges,
   9 garden stages.
 
-The coaching voice aims for the warm, unhurried, "showing up is the win"
-spirit of the home-yoga movement. All words, characters, and art here are
-original to this app; it is not affiliated with or endorsed by any
-instructor or channel.
+Every session is shaped like a home yoga practice: you arrive with a quiet
+seated breath, warm up gently, move through the main block, wind down, and
+close with breathing and a kind thought. The coaching voice — especially
+Vera, the default coach — is modeled on the warm, unhurried, invitational
+spirit of home-yoga teachers such as Adriene Mishler (Yoga With Adriene),
+whose style inspired this app. All words, characters, and art here are
+original; the app is not affiliated with, endorsed by, or connected to her
+or any other instructor or channel.
 
 Made with 💚 and Claude Code.
