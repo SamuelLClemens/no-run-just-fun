@@ -141,17 +141,18 @@ export function mirrorState(st) {
 // ---------- geometry ----------
 
 function mat(color) {
-  return new THREE.MeshLambertMaterial({ color, flatShading: true });
+  // smooth shading: soft rounded limbs instead of faceted panels
+  return new THREE.MeshLambertMaterial({ color, flatShading: false });
 }
 
 function capsule(parent, r, len, material, y, z = 0) {
-  const m = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 2, 7), material);
+  const m = new THREE.Mesh(new THREE.CapsuleGeometry(r, len, 3, 12), material);
   m.position.set(0, y, z);
   parent.add(m);
   return m;
 }
 
-function sphere(parent, r, material, x = 0, y = 0, z = 0, ws = 8, hs = 6) {
+function sphere(parent, r, material, x = 0, y = 0, z = 0, ws = 12, hs = 9) {
   const m = new THREE.Mesh(new THREE.SphereGeometry(r, ws, hs), material);
   m.position.set(x, y, z);
   parent.add(m);
@@ -234,11 +235,17 @@ function buildRig(character) {
   joints.neck = joint(joints.chest, 0, 0.23, 0);
   capsule(joints.neck, 0.042, 0.05, skin, 0.02);
   joints.head = joint(joints.neck, 0, 0.08, 0);
-  sphere(joints.head, 0.115, skin, 0, 0.10, 0);
-  // face
-  sphere(joints.head, 0.0135, dark, -0.042, 0.12, 0.102, 5, 4);
-  sphere(joints.head, 0.0135, dark, 0.042, 0.12, 0.102, 5, 4);
-  const smile = new THREE.Mesh(new THREE.TorusGeometry(0.032, 0.0065, 5, 10, Math.PI * 0.75), dark);
+  sphere(joints.head, 0.115, skin, 0, 0.10, 0, 18, 14);
+  // face: eyes that can blink, brows, a soft smile
+  const eyes = [
+    sphere(joints.head, 0.0135, dark, -0.042, 0.12, 0.102, 8, 6),
+    sphere(joints.head, 0.0135, dark, 0.042, 0.12, 0.102, 8, 6),
+  ];
+  for (const sx of [-1, 1]) {
+    const brow = box(joints.head, 0.036, 0.0085, 0.012, hairMat, sx * 0.043, 0.152, 0.098);
+    brow.rotation.z = sx * -0.12;
+  }
+  const smile = new THREE.Mesh(new THREE.TorusGeometry(0.032, 0.0065, 6, 14, Math.PI * 0.75), dark);
   smile.position.set(0, 0.066, 0.103);
   smile.rotation.z = Math.PI + (Math.PI * 0.125);
   joints.head.add(smile);
@@ -253,7 +260,10 @@ function buildRig(character) {
     const el = joint(sh, 0, -0.26, 0);
     joints['elbow' + side] = el;
     capsule(el, 0.045, 0.16, skin, -0.105);
-    sphere(el, 0.055, skin, 0, -0.245, 0, 7, 5);
+    // hand: flattened, slightly elongated — reads as a palm, not a mitten ball
+    const hand = sphere(el, 0.055, skin, 0, -0.25, 0.008, 10, 8);
+    hand.scale.set(0.85, 1.15, 0.62);
+    hand.rotation.x = 0.18;
   }
 
   // legs (leggings, bare feet)
@@ -270,7 +280,7 @@ function buildRig(character) {
     box(an, 0.085, 0.055, 0.19, skin, 0, -0.035, 0.045);
   }
 
-  return { root, joints };
+  return { root, joints, eyes };
 }
 
 // ---------- avatar ----------
@@ -406,6 +416,11 @@ export class Avatar {
       this.pivot.rotation.y = this._yaw * D2R;
       const breath = this._breathe ? Math.sin(this.time * (Math.PI * 2) / 3.6) : 0;
       this._apply(this.current, breath);
+      if (this._breathe && this.rig.eyes) {
+        // natural blink: a quick 0.12s close on an uneven ~4.1s cycle
+        const blink = (this.time % 4.1) < 0.12 ? 0.12 : 1;
+        for (const eye of this.rig.eyes) eye.scale.y = blink;
+      }
     }
     this.renderer.render(this.scene, this.camera);
   }
