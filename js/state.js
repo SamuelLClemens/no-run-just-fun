@@ -14,6 +14,7 @@ function defaults() {
       style: 'gentle',          // gentle | cheerleader | funny
       voiceOn: true,
       naturalOn: false,         // optional in-browser natural voice (beta)
+      fullInstructorOn: false,  // optional photoreal instructor (beta)
       sfxOn: true,
       musicOn: false,           // default OFF per iOS autoplay + brief
       musicVol: 0.5,

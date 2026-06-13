@@ -1,3 +1,7 @@
 .DS_Store
 *.log
 .claude/
+# Raw Mixamo source files — never commit. Mixamo's license forbids
+# redistributing raw character/animation assets; only the optimized in-app
+# GLB (models/vera.glb) ships.
+*.fbx
