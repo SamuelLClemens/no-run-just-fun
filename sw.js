@@ -1,7 +1,7 @@
 // Offline support: precache the whole app on install, serve cache-first.
 // Bump CACHE_VERSION with every release so updates roll out cleanly.
 
-const CACHE_VERSION = 'ygt-v2.2.0';
+const CACHE_VERSION = 'ygt-v3.0.0';
 
 const PRECACHE = [
   './',
@@ -21,6 +21,7 @@ const PRECACHE = [
   'js/gamify.js',
   'js/player.js',
   'js/avatar.js',
+  'js/realistic-avatar.js',
   'js/confetti.js',
   'js/dev.js',
   'js/data/exercises.js',

@@ -208,9 +208,24 @@ function sessionScreen(mins) {
 
   // avatar (graceful fallback if WebGL is unavailable)
   const canvas = document.getElementById('avatar-canvas');
+  const char = getCharacter(profile.character);
+  const wantReal = profile.fullInstructorOn && RealisticAvatar &&
+    realisticHelpers && realisticHelpers.realisticInstructorSupported();
   try {
-    avatar = new Avatar(canvas, getCharacter(profile.character));
-    avatar.start();
+    if (wantReal) {
+      avatar = new RealisticAvatar(canvas, char);
+      avatar.start();
+      // if she fails to load, quietly swap to the lean coach for this session
+      avatar.onError = () => swapToLeanAvatar(canvas, char);
+      // if the device renders her too slowly, note it so the NEXT session uses
+      // the light coach — but let her finish this one (no jarring mid-session swap)
+      avatar.watchPerformance((fps) => {
+        console.info('full instructor runs slowly here (', Math.round(fps), 'fps) — the light coach will lead next session');
+      });
+    } else {
+      avatar = new Avatar(canvas, char);
+      avatar.start();
+    }
   } catch (e) {
     console.warn('avatar unavailable:', e);
     canvas.closest('.stage').classList.add('no-webgl');
@@ -267,6 +282,24 @@ function sessionScreen(mins) {
   });
 
   player.start();
+}
+
+// Quietly replace the photoreal coach with the lean one mid-session. A fresh
+// canvas is used because a disposed WebGL context cannot be re-bound.
+function swapToLeanAvatar(oldCanvas, char) {
+  try { if (avatar && avatar.dispose) avatar.dispose(); } catch { /* ok */ }
+  const fresh = oldCanvas.cloneNode(false); // copies id/class, not the GL context
+  if (oldCanvas.parentNode) oldCanvas.replaceWith(fresh);
+  try {
+    avatar = new Avatar(fresh, char);
+    avatar.start();
+    if (window.__nrjf) window.__nrjf.avatar = avatar;
+    const it = player && player.plan && player.plan.items[player.idx];
+    if (it) avatar.setPose(POSES[it.ex.id] || null);
+  } catch (e) {
+    console.warn('lean fallback failed:', e);
+    fresh.closest('.stage')?.classList.add('no-webgl');
+  }
 }
 
 function teardownSession() {
@@ -405,6 +438,13 @@ function settingsScreen() {
       </section>
 
       <section class="card">
+        <strong>Full instructor <span class="beta-chip">beta</span></strong>
+        <p class="hint">A photoreal coach who breathes and stands with you, instead of the friendly stick-figure. She downloads once (about 2 MB) and then works offline. She is a preview — detailed movement for each exercise is still on the way, and the light coach keeps doing the moves in the meantime. On slower phones the app uses the light coach automatically.</p>
+        <label class="toggle"><input type="checkbox" id="set-fullinstructor" ${p.fullInstructorOn ? 'checked' : ''}> Use the full instructor</label>
+        <small class="hint" id="fi-status" role="status"></small>
+      </section>
+
+      <section class="card">
         <strong>Encouragement style</strong>
         <div class="style-row" role="group" aria-label="Encouragement style">
           ${['gentle', 'cheerleader', 'funny'].map((s) => `
@@ -501,6 +541,22 @@ function settingsScreen() {
     if (p.naturalOn) naturalVoice.enable({ reprobe: true }); // explicit ask re-measures the device
     else nvWrap.hidden = true;
   });
+  const fiToggle = document.getElementById('set-fullinstructor');
+  const fiStatus = document.getElementById('fi-status');
+  fiToggle.addEventListener('change', async (e) => {
+    p.fullInstructorOn = e.target.checked;
+    save();
+    if (!p.fullInstructorOn) { fiStatus.textContent = ''; return; }
+    await ensureRealisticClass();
+    realisticHelpers.clearRealisticVerdict(); // an explicit opt-in re-tests the device
+    if (!realisticHelpers.realisticInstructorSupported()) {
+      fiStatus.textContent = 'This device does not support the full instructor, so the light coach will be used.';
+      p.fullInstructorOn = false; fiToggle.checked = false; save();
+    } else {
+      fiStatus.textContent = 'On. The full instructor will appear in your next session, with the light coach ready as backup.';
+    }
+  });
+  if (p.fullInstructorOn) fiStatus.textContent = 'On. The full instructor appears in your sessions, with the light coach as automatic backup.';
   app.querySelectorAll('.style-card').forEach((b) => b.addEventListener('click', () => {
     p.style = b.dataset.style;
     save();
@@ -531,12 +587,24 @@ function settingsScreen() {
 // ---------------------------------------------------------------- router
 
 let Avatar = null; // resolved lazily so the home screen renders instantly
+let RealisticAvatar = null;
+let realisticHelpers = null;
 let renderSeq = 0; // guards against concurrent renders across the async import
 
 async function ensureAvatarClass() {
   if (!Avatar) {
     const mod = await import('./avatar.js');
     Avatar = mod.Avatar;
+  }
+}
+
+// Resolve the photoreal instructor only when it is actually wanted — its loader
+// and model stay out of the default path entirely.
+async function ensureRealisticClass() {
+  if (!RealisticAvatar) {
+    const mod = await import('./realistic-avatar.js');
+    RealisticAvatar = mod.RealisticAvatar;
+    realisticHelpers = mod;
   }
 }
 
@@ -549,7 +617,8 @@ async function render() {
     const mins = parseInt(h.slice(9), 10);
     if ([7, 15, 30, 45].includes(mins)) {
       await ensureAvatarClass();
-      if (seq !== renderSeq) return; // superseded while three.js loaded
+      if (store.profile.fullInstructorOn) await ensureRealisticClass();
+      if (seq !== renderSeq) return; // superseded while modules loaded
       sessionScreen(mins);
       return;
     }

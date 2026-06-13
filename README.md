@@ -34,10 +34,11 @@ so sharing the link never shares your data.
 - There is no server, no account, no analytics, and no tracking of any kind.
 - Nothing you do in the app is ever sent anywhere, because there is nowhere
   to send it.
-- The one optional exception to "no downloads": turning on **Natural voice**
-  in Settings fetches a public, open-source voice model file once. That is a
-  one-way download of a static file — nothing about you travels the other
-  direction. Full asset list in [LICENSES.md](LICENSES.md).
+- The only optional exceptions to "no downloads": turning on **Natural voice**
+  fetches a public open-source voice model once, and turning on the **Full
+  instructor** fetches a compressed 3D character once. Both are one-way
+  downloads of static files — nothing about you travels the other direction —
+  and both are off by default. Full asset list in [LICENSES.md](LICENSES.md).
 
 ## Safety, plainly
 
@@ -75,6 +76,12 @@ automatically. One technical note for maintainers: bump `CACHE_VERSION` in
   **Natural voice (beta)** in Settings downloads a small open-source voice
   model once (~90 MB) and then speaks entirely on your device; if it cannot
   load, the regular voice takes over automatically.
+- The light stick-figure coach is the default. An optional **Full instructor
+  (beta)** in Settings swaps in a photoreal coach who breathes and stands with
+  you. She is a compressed 3D model (~2 MB) that downloads once and then works
+  offline. It is an early preview — detailed per-exercise movement is still on
+  the way, and the light coach keeps demonstrating the moves meanwhile. On
+  slower phones the app stays on the light coach automatically.
 - All sounds and music are generated in the browser with the Web Audio API —
   no audio files, no licensing worries.
 - Fonts: Fredoka and Nunito (SIL Open Font License), self-hosted.
